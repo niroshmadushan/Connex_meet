@@ -58,16 +58,20 @@ const HomeDashboard = () => {
       {
         label: 'Successful',
         data: [successfulMeetings, successfulSessions, successfulInterviews, successfulServices],
-        backgroundColor: '#007aff', // Blue color for successful events
+        backgroundColor: '#007aff',
         borderColor: '#005bb5',
-        borderWidth: 1,
+        borderWidth: 2,
+        borderRadius: 5,
+        barThickness: 20,
       },
       {
         label: 'Canceled',
         data: [canceledMeetings, canceledSessions, canceledInterviews, canceledServices],
-        backgroundColor: '#f44336', // Red color for canceled events
+        backgroundColor: '#f44336',
         borderColor: '#d32f2f',
-        borderWidth: 1,
+        borderWidth: 2,
+        borderRadius: 5,
+        barThickness: 20,
       },
     ],
   };
@@ -80,6 +84,7 @@ const HomeDashboard = () => {
         data: [totalMeetings, totalSessions, totalInterviews, totalServices],
         backgroundColor: ['#007aff', '#1e88e5', '#29b6f6', '#4fc3f7'],
         hoverBackgroundColor: ['#005bb5', '#1976d2', '#0288d1', '#039be5'],
+        borderWidth: 1,
       },
     ],
   };
@@ -92,9 +97,11 @@ const HomeDashboard = () => {
         label: 'Average Rating',
         data: [starRatingMeetings, starRatingSessions, starRatingInterviews, starRatingServices],
         fill: false,
-        backgroundColor: '#ffc107', // Yellow color for ratings
+        backgroundColor: '#ffc107',
         borderColor: '#ffeb3b',
-        tension: 0.4,
+        tension: 0.3,
+        pointRadius: 5,
+        pointHoverRadius: 7,
       },
     ],
   };
@@ -112,6 +119,7 @@ const HomeDashboard = () => {
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: '#007aff',
+        borderWidth: 2,
       },
     ],
   };
@@ -125,17 +133,20 @@ const HomeDashboard = () => {
         position: 'top',
         labels: {
           font: {
-            size: 12, // Smaller font size for mobile
+            size: 12,
+            weight: 'bold',
+            family: 'Arial, sans-serif',
           },
+          color: '#333',
         },
       },
       title: {
-        display: false, // Hiding title to save space
+        display: false,
       },
     },
     animation: {
-      duration: 1500,
-      easing: 'easeOutBounce',
+      duration: 2000,
+      easing: 'easeOutQuart',
     },
   };
 
@@ -148,78 +159,89 @@ const HomeDashboard = () => {
         labels: {
           font: {
             size: 12,
+            weight: 'bold',
+            family: 'Arial, sans-serif',
           },
+          color: '#333',
         },
       },
     },
     scales: {
       r: {
         angleLines: {
-          display: false,
+          color: '#e0e0e0',
+        },
+        grid: {
+          color: '#e0e0e0',
+        },
+        ticks: {
+          display: true,
+          font: {
+            size: 10,
+          },
         },
         suggestedMin: 0,
         suggestedMax: 5,
-        ticks: {
-          font: {
-            size: 10, // Smaller font size for ticks
-          },
-        },
       },
+    },
+    animation: {
+      duration: 2000,
+      easing: 'easeOutBounce',
     },
   };
 
   return (
     <Box sx={{ padding: '10px' }}>
       {/* Analytics Header */}
-      <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: '10px', textAlign: 'center', color: '#007aff' }}>
-        Meeting Analytics Dashboard
+      <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: '10px', textAlign: 'center', color: '#007aff', fontFamily: 'Roboto, sans-serif' }}>
+        Meeting Analytics
       </Typography>
 
       {/* Overview of Total Counts */}
       <Grid container spacing={1} sx={{ marginBottom: '10px' }}>
         <Grid item xs={6} sm={3}>
-          <Paper elevation={3} sx={{ padding: '10px', textAlign: 'center' }}>
-            <Typography variant="body2" sx={{ fontSize: '14px' }}>Total Meetings</Typography>
-            <Typography variant="h6" sx={{ color: '#007aff', fontWeight: 'bold' }}>{totalMeetings}</Typography>
+          <Paper elevation={3} sx={{ padding: '10px', textAlign: 'center', backgroundColor: '#007aff', color: '#fff', borderRadius: '8px', animation: 'fadeIn 1s' }}>
+            <Typography variant="body2" sx={{ fontSize: '12px', fontWeight: 'bold' }}>Total Meetings</Typography>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{totalMeetings}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper elevation={3} sx={{ padding: '10px', textAlign: 'center' }}>
-            <Typography variant="body2" sx={{ fontSize: '14px' }}>Total Sessions</Typography>
-            <Typography variant="h6" sx={{ color: '#1e88e5', fontWeight: 'bold' }}>{totalSessions}</Typography>
+          <Paper elevation={3} sx={{ padding: '10px', textAlign: 'center', backgroundColor: '#1e88e5', color: '#fff', borderRadius: '8px', animation: 'fadeIn 1s' }}>
+            <Typography variant="body2" sx={{ fontSize: '12px', fontWeight: 'bold' }}>Total Sessions</Typography>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{totalSessions}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper elevation={3} sx={{ padding: '10px', textAlign: 'center' }}>
-            <Typography variant="body2" sx={{ fontSize: '14px' }}>Total Interviews</Typography>
-            <Typography variant="h6" sx={{ color: '#29b6f6', fontWeight: 'bold' }}>{totalInterviews}</Typography>
+          <Paper elevation={3} sx={{ padding: '10px', textAlign: 'center', backgroundColor: '#29b6f6', color: '#fff', borderRadius: '8px', animation: 'fadeIn 1s' }}>
+            <Typography variant="body2" sx={{ fontSize: '12px', fontWeight: 'bold' }}>Total Interviews</Typography>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{totalInterviews}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper elevation={3} sx={{ padding: '10px', textAlign: 'center' }}>
-            <Typography variant="body2" sx={{ fontSize: '14px' }}>Total Services</Typography>
-            <Typography variant="h6" sx={{ color: '#4fc3f7', fontWeight: 'bold' }}>{totalServices}</Typography>
+          <Paper elevation={3} sx={{ padding: '10px', textAlign: 'center', backgroundColor: '#4fc3f7', color: '#fff', borderRadius: '8px', animation: 'fadeIn 1s' }}>
+            <Typography variant="body2" sx={{ fontSize: '12px', fontWeight: 'bold' }}>Total Services</Typography>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{totalServices}</Typography>
           </Paper>
         </Grid>
       </Grid>
 
       {/* Bar Chart for Success and Cancellations */}
-      <Paper elevation={3} sx={{ padding: '10px', marginBottom: '10px', height: '200px' }}>
+      <Paper elevation={3} sx={{ padding: '10px', marginBottom: '10px', height: '180px', borderRadius: '8px', animation: 'fadeIn 1s' }}>
         <Bar data={barData} options={chartOptions} />
       </Paper>
 
       {/* Pie Chart for Distribution */}
-      <Paper elevation={3} sx={{ padding: '10px', marginBottom: '10px', height: '200px' }}>
+      <Paper elevation={3} sx={{ padding: '10px', marginBottom: '10px', height: '180px', borderRadius: '8px', animation: 'fadeIn 1s' }}>
         <Pie data={pieData} options={chartOptions} />
       </Paper>
 
       {/* Line Chart for Feedback Ratings */}
-      <Paper elevation={3} sx={{ padding: '10px', marginBottom: '10px', height: '200px' }}>
+      <Paper elevation={3} sx={{ padding: '10px', marginBottom: '10px', height: '180px', borderRadius: '8px', animation: 'fadeIn 1s' }}>
         <Line data={lineData} options={chartOptions} />
       </Paper>
 
       {/* Radar Chart for Feedback Comparison */}
-      <Paper elevation={3} sx={{ padding: '10px', height: '200px' }}>
+      <Paper elevation={3} sx={{ padding: '10px', height: '180px', borderRadius: '8px', animation: 'fadeIn 1s' }}>
         <Radar data={radarData} options={radarOptions} />
       </Paper>
     </Box>
