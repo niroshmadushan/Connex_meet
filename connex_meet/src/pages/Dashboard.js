@@ -1,7 +1,8 @@
-// src/pages/HomeDashboard.js
+// src/pages/Dashboard.js
 import React from 'react';
 import { Box, Typography, Paper, Grid } from '@mui/material';
 import { Bar, Pie, Line, Radar } from 'react-chartjs-2';
+import Slider from 'react-slick';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -18,6 +19,12 @@ import {
 } from 'chart.js';
 import CountUp from 'react-countup';
 
+// Import images for the carousel
+import img1 from '../img/about-us-page-examples-1-61fd8f9784626-sej.webp';
+import img2 from '../img/find-company-information-image.jpg';
+import img3 from '../img/Mobile Bank.jpg';
+import img4 from '../img/Microsoft.jpg';
+
 // Registering the necessary chart.js modules
 ChartJS.register(
   ArcElement,
@@ -33,7 +40,19 @@ ChartJS.register(
   Title
 );
 
-const HomeDashboard = () => {
+// Slider settings for carousel
+const sliderSettings = {
+  dots: false,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 3000,
+  arrows: true,
+};
+
+const Dashboard = () => {
   // Data for analytics
   const totalMeetings = 100;
   const successfulMeetings = 75;
@@ -193,9 +212,27 @@ const HomeDashboard = () => {
 
   return (
     <Box sx={{ padding: '10px' }}>
+      {/* Image Carousel at the Top */}
+      <Box sx={{ position: 'relative', width: '90%', mb: 2, marginLeft: '5%', zIndex: 1 }}>
+        <Slider {...sliderSettings}>
+          <div>
+            <img src={img1} alt="New Event 1" style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px' }} />
+          </div>
+          <div>
+            <img src={img2} alt="New Event 2" style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px' }} />
+          </div>
+          <div>
+            <img src={img3} alt="News Update 1" style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px' }} />
+          </div>
+          <div>
+            <img src={img4} alt="News Update 2" style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px' }} />
+          </div>
+        </Slider>
+      </Box>
+
       {/* Analytics Header */}
       <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: '10px', textAlign: 'center', color: '#007aff', fontFamily: 'Roboto, sans-serif' }}>
-        Meeting Analytics Dashboard
+        Meeting Analytics
       </Typography>
 
       {/* Overview of Total Counts */}
@@ -257,4 +294,4 @@ const HomeDashboard = () => {
   );
 };
 
-export default HomeDashboard;
+export default Dashboard;

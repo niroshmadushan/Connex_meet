@@ -5,7 +5,9 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme/theme';
 import Home from './pages/Home';
-import HomeDashboard from './pages/HomeDashboard';
+import HomeDashboard from './pages/Dashboard';
+import MeetingRooms from './pages/MeetingRooms';
+import Layout from './pages/Layout'; // Import Layout
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -16,10 +18,11 @@ const App = () => {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<HomeDashboard />} />
-          {/* Define the new route for eventspage */}
-          <Route path="/eventspage" element={<Home />} />
+          {/* Wrap each route with Layout */}
+          <Route path="/" element={<Layout><HomeDashboard /></Layout>} />
+          <Route path="/dashboard" element={<Layout><HomeDashboard /></Layout>} />
+          <Route path="/eventspage" element={<Layout><Home /></Layout>} />
+          <Route path="/meeting-rooms" element={<Layout><MeetingRooms /></Layout>} />
         </Routes>
       </Router>
     </ThemeProvider>
