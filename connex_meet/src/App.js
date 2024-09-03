@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import HomeDashboard from './pages/Dashboard';
 import MeetingRooms from './pages/MeetingRooms';
 import Layout from './pages/Layout'; // Import Layout
+import AddMeetingSession  from './pages/AddMeetingSession';
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -23,6 +24,8 @@ const App = () => {
           <Route path="/dashboard" element={<Layout><HomeDashboard /></Layout>} />
           <Route path="/eventspage" element={<Layout><Home /></Layout>} />
           <Route path="/meeting-rooms" element={<Layout><MeetingRooms /></Layout>} />
+          <Route path="/addmeeting" element={<Layout><AddMeetingSession /></Layout>} />
+          
         </Routes>
       </Router>
     </ThemeProvider>
