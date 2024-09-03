@@ -9,6 +9,13 @@ import {
   Card,
   CardContent,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Slide,
+  Grid
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import EventNoteIcon from '@mui/icons-material/EventNote';
@@ -27,6 +34,7 @@ import img2 from '../img/find-company-information-image.jpg';
 import img3 from '../img/Mobile Bank.jpg';
 import img4 from '../img/Microsoft.jpg';
 import HomeDashboard from './HomeDashboard';
+import MeetingRooms from './MeetingRooms';  // Import the new MeetingRooms component
 
 // Theme colors and styles for light theme
 const themeColor = {
@@ -108,6 +116,8 @@ const StyledCard = styled(Card)(({ theme }) => ({
 
 const Home = () => {
   const [selectedView, setSelectedView] = useState('home');
+  const [open, setOpen] = useState(false);
+  const [selectedMeeting, setSelectedMeeting] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -127,45 +137,24 @@ const Home = () => {
       navigate('/'); // Navigate to the home route
     } else if (view === 'events') {
       navigate('/eventspage'); // Navigate to the events page
+    } else if (view === 'map') {
+      navigate('/meeting-rooms'); // Navigate to the meeting rooms page
     }
   };
 
+  const handleCardClick = (meeting) => {
+    setSelectedMeeting(meeting);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedMeeting(null);
+  };
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', bgcolor: themeColor.background, overflow: 'hidden' }}>
-      {/* Header Section */}
-      <AppBar position="fixed" sx={{ background: themeColor.headerBg, boxShadow: 'none', color: themeColor.headerTextColor, top: 0, zIndex: 3 }}>
-        <Toolbar>
-          <img src={logo} alt="Logo" style={{ height: '40px' }} />
-        </Toolbar>
-      </AppBar>
-
-      {/* Content Section */}
-      <Box sx={{ flex: 1, overflowY: 'auto', paddingTop: '64px', paddingBottom: '60px' }}>
-        {/* Dynamic content based on selected view */}
-        {selectedView === 'home' && (
-          <>
-            {/* Carousel */}
-            <Box sx={{ position: 'relative', top: 0, width: '100%', mb: 1, zIndex: 1 }}>
-              <Slider {...sliderSettings}>
-                <div>
-                  <img src={img1} alt="New Event 1" style={{ width: '90%', height: '150px', marginLeft: '5%', objectFit: 'cover', borderRadius: '8px' }} />
-                </div>
-                <div>
-                  <img src={img2} alt="New Event 2" style={{ width: '90%', height: '150px', marginLeft: '5%', objectFit: 'cover', borderRadius: '8px' }} />
-                </div>
-                <div>
-                  <img src={img3} alt="News Update 1" style={{ width: '90%', height: '150px', marginLeft: '5%', objectFit: 'cover', borderRadius: '8px' }} />
-                </div>
-                <div>
-                  <img src={img4} alt="News Update 2" style={{ width: '90%', height: '150px', marginLeft: '5%', objectFit: 'cover', borderRadius: '8px' }} />
-                </div>
-              </Slider>
-            </Box>
-            {/* Analytics Dashboard */}
-            <HomeDashboard />
-          </>
-        )}
-
+    <Box sx={{ display: 'flex', flexDirection: 'column', width: 'auto', bgcolor: themeColor.background, overflow: 'hidden' }}>
+     
         {/* Upcoming Meetings */}
         {selectedView === 'events' && (
           <Container sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: '20px' }}>
@@ -174,7 +163,7 @@ const Home = () => {
             </Typography>
             <Box sx={{ width: '100%', maxWidth: '600px' }}>
               {meetingData.map((meeting, index) => (
-                <StyledCard key={index}>
+                <StyledCard key={index} onClick={() => handleCardClick(meeting)}>
                   <CardContent sx={{ padding: '8px 12px' }}>
                     <Typography variant="subtitle1" sx={{ mb: 0.5, fontSize: '0.9rem', fontWeight: 'bold' }}>{meeting.title}</Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
@@ -191,27 +180,48 @@ const Home = () => {
             </Box>
           </Container>
         )}
+
+        {/* Meeting Details Popup */}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          TransitionComponent={Slide}
+          TransitionProps={{ direction: 'up', timeout: 400 }}
+          PaperProps={{
+            style: {
+              borderRadius: '12px',
+              padding: '16px',
+              width: '90%',
+              maxWidth: '400px',
+              boxShadow: '0px 4px 20px rgba(0,0,0,0.1)',
+            },
+          }}
+        >
+          <DialogTitle sx={{ textAlign: 'center', color: themeColor.primary, fontWeight: 'bold' }}>
+            {selectedMeeting?.title}
+          </DialogTitle>
+          <DialogContent>
+            <Grid container spacing={2}>
+              <Grid item xs={6}><Typography variant="body2"><strong>Date:</strong></Typography></Grid>
+              <Grid item xs={6}><Typography variant="body2">{selectedMeeting?.date}</Typography></Grid>
+              <Grid item xs={6}><Typography variant="body2"><strong>Time:</strong></Typography></Grid>
+              <Grid item xs={6}><Typography variant="body2">{selectedMeeting?.time}</Typography></Grid>
+              <Grid item xs={6}><Typography variant="body2"><strong>Location:</strong></Typography></Grid>
+              <Grid item xs={6}><Typography variant="body2">{selectedMeeting?.location}</Typography></Grid>
+              <Grid item xs={12}><Typography variant="body2"><strong>Details:</strong></Typography></Grid>
+              <Grid item xs={12}><Typography variant="body2">{selectedMeeting?.details}</Typography></Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions sx={{ justifyContent: 'center' }}>
+            <Button onClick={handleClose} variant="contained" sx={{ backgroundColor: themeColor.primary, color: '#fff' }}>
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
 
-      {/* Footer Section */}
-      <FooterNavigation>
-        <FooterButton onClick={() => handleNavigationChange('home')} className={selectedView === 'home' ? 'Mui-selected' : ''}>
-          <HomeIcon />
-        </FooterButton>
-        <FooterButton onClick={() => handleNavigationChange('events')} className={selectedView === 'events' ? 'Mui-selected' : ''}>
-          <EventNoteIcon />
-        </FooterButton>
-        <FooterButton onClick={() => handleNavigationChange('dashboard')} className={selectedView === 'dashboard' ? 'Mui-selected' : ''}>
-          <DashboardCustomizeIcon />
-        </FooterButton>
-        <FooterButton onClick={() => handleNavigationChange('map')} className={selectedView === 'map' ? 'Mui-selected' : ''}>
-          <MapIcon />
-        </FooterButton>
-        <FooterButton onClick={() => handleNavigationChange('profile')} className={selectedView === 'profile' ? 'Mui-selected' : ''}>
-          <PersonOutlineIcon />
-        </FooterButton>
-      </FooterNavigation>
-    </Box>
+     
+   
   );
 };
 
