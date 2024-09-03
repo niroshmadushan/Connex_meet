@@ -61,8 +61,8 @@ const Layout = ({ children }) => {
       case '/meeting-rooms':
         setSelectedView('map');
         break;
-      case '/dashboard':
-        setSelectedView('dashboard');
+      case '/addmeeting':
+        setSelectedView('addmeeting');
         break;
       default:
         setSelectedView('home');
@@ -82,8 +82,8 @@ const Layout = ({ children }) => {
       case 'map':
         navigate('/meeting-rooms');
         break;
-      case 'dashboard':
-        navigate('/dashboard');
+      case 'addmeeting':
+        navigate('/addmeeting');
         break;
       case 'profile':
         // navigate to profile page (not defined yet)
@@ -115,7 +115,7 @@ const Layout = ({ children }) => {
         <FooterButton onClick={() => handleNavigationChange('events')} className={selectedView === 'events' ? 'Mui-selected' : ''}>
           <EventNoteIcon />
         </FooterButton>
-        <FooterButton onClick={() => handleNavigationChange('dashboard')} className={selectedView === 'dashboard' ? 'Mui-selected' : ''}>
+        <FooterButton onClick={() => handleNavigationChange('addmeeting')} className={selectedView === 'dashboard' ? 'Mui-selected' : ''}>
           <DashboardCustomizeIcon />
         </FooterButton>
         <FooterButton onClick={() => handleNavigationChange('map')} className={selectedView === 'map' ? 'Mui-selected' : ''}>

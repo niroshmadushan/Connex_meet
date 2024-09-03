@@ -7,6 +7,7 @@ import theme from './theme/theme';
 import Home from './pages/Home';
 import HomeDashboard from './pages/Dashboard';
 import MeetingRooms from './pages/MeetingRooms';
+import AddMeeting from './pages/AddMeetingSession';
 import Layout from './pages/Layout'; // Import Layout
 
 import "slick-carousel/slick/slick.css";
@@ -20,9 +21,9 @@ const App = () => {
         <Routes>
           {/* Wrap each route with Layout */}
           <Route path="/" element={<Layout><HomeDashboard /></Layout>} />
-          <Route path="/dashboard" element={<Layout><HomeDashboard /></Layout>} />
           <Route path="/eventspage" element={<Layout><Home /></Layout>} />
           <Route path="/meeting-rooms" element={<Layout><MeetingRooms /></Layout>} />
+          <Route path="/addmeeting" element={<Layout><AddMeeting /></Layout>} />
         </Routes>
       </Router>
     </ThemeProvider>
