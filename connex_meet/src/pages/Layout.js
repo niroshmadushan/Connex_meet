@@ -115,7 +115,7 @@ const Layout = ({ children }) => {
         <FooterButton onClick={() => handleNavigationChange('events')} className={selectedView === 'events' ? 'Mui-selected' : ''}>
           <EventNoteIcon />
         </FooterButton>
-        <FooterButton onClick={() => handleNavigationChange('addmeeting')} className={selectedView === 'dashboard' ? 'Mui-selected' : ''}>
+        <FooterButton onClick={() => handleNavigationChange('addmeeting')} className={selectedView === 'addmeeting' ? 'Mui-selected' : ''}>
           <DashboardCustomizeIcon />
         </FooterButton>
         <FooterButton onClick={() => handleNavigationChange('map')} className={selectedView === 'map' ? 'Mui-selected' : ''}>
