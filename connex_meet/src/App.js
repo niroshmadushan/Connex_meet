@@ -11,6 +11,7 @@ import AddMeeting from './pages/AddMeetingSession';
 import Layout from './pages/Layout'; // Import Layout
 import AddMeetingSession  from './pages/AddMeetingSession';
 import Profile from './pages/Profile';
+import Login from './pages/Login';
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -23,6 +24,7 @@ const App = () => {
         <Routes>
           {/* Wrap each route with Layout */}
           <Route path="/" element={<Layout><HomeDashboard /></Layout>} />
+          <Route path="/Login" element={<Login />} />
           <Route path="/eventspage" element={<Layout><Home /></Layout>} />
           <Route path="/meeting-rooms" element={<Layout><MeetingRooms /></Layout>} />
           <Route path="/addmeeting" element={<Layout><AddMeetingSession /></Layout>} />
