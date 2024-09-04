@@ -1,6 +1,6 @@
 // src/pages/Profile.js
 import React, { useState } from 'react';
-import profilePic from '../img/th.jpeg';
+import profilePic from '../img/prof.jpg';
 import {
   Box,
   Avatar,
@@ -18,14 +18,19 @@ import {
   InputAdornment,
   FormControl,
   InputLabel,
-  OutlinedInput
+  OutlinedInput,
+  Slide,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
-import LockIcon from '@mui/icons-material/Lock';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import LockIcon from '@mui/icons-material/Lock';
 import { styled } from '@mui/system';
 
 const themeColor = {
@@ -34,6 +39,7 @@ const themeColor = {
   background: '#f9f9f9', // Light background color
   textPrimary: '#333333', // Primary text color for better contrast
   cardBg: '#ffffff', // Light background for cards
+  buttonHover: '#005bb5', // Updated button hover color for better contrast
 };
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -42,6 +48,22 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: '20px',
   borderRadius: '10px',
   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  marginBottom: '20px',
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  fontSize: '0.85rem',
+  padding: '8px 16px',
+  borderRadius: '25px',
+  textTransform: 'none',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    backgroundColor: themeColor.buttonHover, // Updated hover color
+  },
+  '&:active': {
+    transform: 'scale(0.95)',
+  },
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }));
 
 const Profile = () => {
@@ -113,14 +135,13 @@ const Profile = () => {
     <Container sx={{ mt: 4 }}>
       <StyledPaper elevation={3}>
         <Grid container spacing={2} alignItems="center">
-          {/* Profile Picture and Name in the Same Row */}
+          {/* Profile Picture and Name */}
           <Grid item xs={12} sm={4} sx={{ display: 'flex', alignItems: 'center' }}>
             <Avatar
               alt={userData.name}
               src={userData.profilePic}
-              sx={{ width: 100, height: 100, marginRight: '10px' }}
+              sx={{ width: 100, height: 100, marginRight: '10px', border: `2px solid ${themeColor.primary}` }}
             />
-            {/* Name */}
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                 {userData.name}
@@ -128,38 +149,66 @@ const Profile = () => {
             </Box>
           </Grid>
           <Grid item xs={12} sm={8}>
-            <Typography variant="body1" sx={{ mb: 2 }}><strong>Email:</strong> {userData.email}</Typography>
-            <Typography variant="body1" sx={{ mb: 2 }}><strong>Phone:</strong> {userData.phone}</Typography>
-            <Typography variant="body1" sx={{ mb: 2 }}><strong>Address:</strong> {userData.address}</Typography>
-            <Typography variant="body1" sx={{ mb: 2 }}><strong>Bio:</strong> {userData.bio}</Typography>
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableCell align="right"><strong>Email:</strong></TableCell>
+                  <TableCell>{userData.email}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell align="right"><strong>Phone:</strong></TableCell>
+                  <TableCell>{userData.phone}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell align="right"><strong>Address:</strong></TableCell>
+                  <TableCell>{userData.address}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell align="right"><strong>Bio:</strong></TableCell>
+                  <TableCell>{userData.bio}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </Grid>
         </Grid>
         
-        {/* Edit Profile and Change Password Buttons in the Center */}
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 2 }}>
-          <Button
-            variant="outlined"
+        {/* Edit Profile and Change Password Buttons */}
+        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', gap: 2 }}>
+          <StyledButton
+            variant="contained"
             color="primary"
             size="small"
             onClick={handleEdit}
-            sx={{ padding: '2px 8px', fontSize: '0.75rem' }}
+            startIcon={<EditIcon />}
           >
             Edit Profile
-          </Button>
-          <Button
+          </StyledButton>
+          <StyledButton
             variant="outlined"
             color="primary"
             size="small"
             onClick={() => setOpenPassword(true)}
-            sx={{ padding: '2px 8px', fontSize: '0.75rem' }}
+            startIcon={<LockIcon />}
           >
             Change Password
-          </Button>
+          </StyledButton>
         </Box>
       </StyledPaper>
 
       {/* Edit Profile Dialog */}
-      <Dialog open={openEdit} onClose={handleCancel}>
+      <Dialog
+        open={openEdit}
+        onClose={handleCancel}
+        TransitionComponent={Slide}
+        TransitionProps={{ direction: 'up' }}
+        PaperProps={{
+          style: {
+            borderRadius: '16px',
+            padding: '20px',
+            boxShadow: '0px 4px 20px rgba(0,0,0,0.2)',
+          },
+        }}
+      >
         <DialogTitle>Edit Profile</DialogTitle>
         <DialogContent>
           <TextField
@@ -169,6 +218,7 @@ const Profile = () => {
             name="name"
             value={editData.name}
             onChange={handleChange}
+            sx={{ mb: 2 }}
           />
           <TextField
             fullWidth
@@ -177,6 +227,7 @@ const Profile = () => {
             name="email"
             value={editData.email}
             onChange={handleChange}
+            sx={{ mb: 2 }}
           />
           <TextField
             fullWidth
@@ -185,6 +236,7 @@ const Profile = () => {
             name="phone"
             value={editData.phone}
             onChange={handleChange}
+            sx={{ mb: 2 }}
           />
           <TextField
             fullWidth
@@ -193,6 +245,7 @@ const Profile = () => {
             name="address"
             value={editData.address}
             onChange={handleChange}
+            sx={{ mb: 2 }}
           />
           <TextField
             fullWidth
@@ -203,23 +256,36 @@ const Profile = () => {
             onChange={handleChange}
             multiline
             rows={3}
+            sx={{ mb: 2 }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleSave} variant="contained" color="primary" startIcon={<SaveIcon />}>
+          <StyledButton onClick={handleSave} variant="contained" color="primary" startIcon={<SaveIcon />}>
             Save
-          </Button>
-          <Button onClick={handleCancel} variant="outlined" color="secondary" startIcon={<CancelIcon />}>
+          </StyledButton>
+          <StyledButton onClick={handleCancel} variant="outlined" color="secondary" startIcon={<CancelIcon />}>
             Cancel
-          </Button>
+          </StyledButton>
         </DialogActions>
       </Dialog>
 
       {/* Change Password Dialog */}
-      <Dialog open={openPassword} onClose={() => setOpenPassword(false)}>
+      <Dialog
+        open={openPassword}
+        onClose={() => setOpenPassword(false)}
+        TransitionComponent={Slide}
+        TransitionProps={{ direction: 'up' }}
+        PaperProps={{
+          style: {
+            borderRadius: '16px',
+            padding: '20px',
+            boxShadow: '0px 4px 20px rgba(0,0,0,0.2)',
+          },
+        }}
+      >
         <DialogTitle>Change Password</DialogTitle>
         <DialogContent>
-          <FormControl variant="outlined" fullWidth margin="dense">
+          <FormControl variant="outlined" fullWidth margin="dense" sx={{ mb: 2 }}>
             <InputLabel htmlFor="currentPassword">Current Password</InputLabel>
             <OutlinedInput
               id="currentPassword"
@@ -241,7 +307,7 @@ const Profile = () => {
               label="Current Password"
             />
           </FormControl>
-          <FormControl variant="outlined" fullWidth margin="dense">
+          <FormControl variant="outlined" fullWidth margin="dense" sx={{ mb: 2 }}>
             <InputLabel htmlFor="newPassword">New Password</InputLabel>
             <OutlinedInput
               id="newPassword"
@@ -287,12 +353,12 @@ const Profile = () => {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handlePasswordChange} variant="contained" color="primary">
+          <StyledButton onClick={handlePasswordChange} variant="contained" color="primary">
             Change Password
-          </Button>
-          <Button onClick={() => setOpenPassword(false)} variant="outlined" color="secondary">
+          </StyledButton>
+          <StyledButton onClick={() => setOpenPassword(false)} variant="outlined" color="secondary">
             Cancel
-          </Button>
+          </StyledButton>
         </DialogActions>
       </Dialog>
     </Container>
