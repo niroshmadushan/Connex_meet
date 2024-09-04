@@ -64,6 +64,9 @@ const Layout = ({ children }) => {
       case '/addmeeting':
         setSelectedView('addmeeting');
         break;
+      case '/profile':
+        setSelectedView('profile');
+        break;
       default:
         setSelectedView('home');
     }
@@ -86,7 +89,7 @@ const Layout = ({ children }) => {
         navigate('/addmeeting');
         break;
       case 'profile':
-        // navigate to profile page (not defined yet)
+        navigate('/profile');
         break;
       default:
         navigate('/');
