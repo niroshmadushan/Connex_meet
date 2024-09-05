@@ -12,28 +12,69 @@ import {
   InputLabel,
   OutlinedInput,
   Paper,
-  Avatar
+  Avatar,
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import PhotoCamera from '@mui/icons-material/PhotoCamera'; // Icon for profile picture upload
-import { styled } from '@mui/system';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import PersonIcon from '@mui/icons-material/Person';
+import EmailIcon from '@mui/icons-material/Email';
+import PhoneIcon from '@mui/icons-material/Phone';
+import HomeIcon from '@mui/icons-material/Home';
+import WorkIcon from '@mui/icons-material/Work';
+import { styled, keyframes } from '@mui/system';
 
 // Theme colors
 const themeColor = {
-  primary: '#007aff', // iOS-like blue color
+  primary: '#0d6efd', // Premium blue color
   textPrimary: '#333333', // Primary text color for better contrast
   cardBg: '#ffffff', // White background for cards
+  error: '#dc3545', // Error color for validation messages
 };
+
+// Animation keyframes
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: themeColor.cardBg,
-  padding: '30px',
-  borderRadius: '12px',
-  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-  maxWidth: '500px',
+  padding: '50px 30px 30px 30px',
+  borderRadius: '16px',
+  boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
+  maxWidth: '600px',
   width: '100%',
+  animation: `${fadeIn} 0.8s ease-out`,
+  position: 'relative', // Make room for top profile image
 }));
+
+const ProfileContainer = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  position: 'absolute',
+  top: '-75px', // Raise the profile picture above the card
+  left: '50%',
+  transform: 'translateX(-50%)', // Center horizontally
+});
+
+const StyledAvatar = styled(Avatar)({
+  width: 120, // Larger profile image
+  height: 120,
+  marginBottom: '8px',
+  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+  transition: 'transform 0.3s ease',
+  '&:hover': {
+    transform: 'scale(1.1)',
+  },
+});
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -41,15 +82,15 @@ const Register = () => {
     email: '',
     phone: '',
     address: '',
-    bio: '',
+    designation: '', // Updated field
     password: '',
     confirmPassword: '',
-    profilePicture: '', // New field for profile picture
+    profilePicture: '',
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [profilePreview, setProfilePreview] = useState(null); // For profile picture preview
+  const [profilePreview, setProfilePreview] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -80,7 +121,7 @@ const Register = () => {
 
   const handleRegister = (e) => {
     e.preventDefault();
-    const { name, email, phone, address, bio, password, confirmPassword } = formData;
+    const { name, email, phone, address, designation, password, confirmPassword } = formData;
 
     // Simple validation
     if (password !== confirmPassword) {
@@ -88,7 +129,7 @@ const Register = () => {
       return;
     }
 
-    if (name === '' || email === '' || phone === '' || address === '' || bio === '' || password === '' || confirmPassword === '') {
+    if (name === '' || email === '' || phone === '' || address === '' || designation === '' || password === '' || confirmPassword === '') {
       setError("Please fill in all fields.");
       return;
     }
@@ -97,7 +138,7 @@ const Register = () => {
     setError('');
     
     // Implement your registration logic here (e.g., API call)
-    console.log('Registration Successful:', { name, email, phone, address, bio, password, profilePicture: formData.profilePicture });
+    console.log('Registration Successful:', { name, email, phone, address, designation, password, profilePicture: formData.profilePicture });
 
     // Clear the form
     setFormData({
@@ -105,7 +146,7 @@ const Register = () => {
       email: '',
       phone: '',
       address: '',
-      bio: '',
+      designation: '',
       password: '',
       confirmPassword: '',
       profilePicture: '',
@@ -114,12 +155,44 @@ const Register = () => {
   };
 
   return (
-    <Container sx={{ mt: 8, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <StyledPaper elevation={3}>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center', color: themeColor.primary }}>
+    <Container sx={{ mt: 15, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <StyledPaper elevation={6}>
+        {/* Profile Picture and Upload Button */}
+        <ProfileContainer>
+          <StyledAvatar src={profilePreview} alt="Profile Picture" />
+          <Button
+            variant="contained"
+            component="label"
+            startIcon={<PhotoCamera />}
+            sx={{ mt: 1, backgroundColor: themeColor.primary, color: '#fff', textTransform: 'none' }}
+          >
+            Upload
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={handleProfilePictureChange}
+            />
+          </Button>
+        </ProfileContainer>
+
+        {/* Form Title */}
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 'bold',
+            mb: 3,
+            color: themeColor.primary,
+            position: 'absolute',
+            top: 16,
+            left: 16,
+          }}
+        >
           Register
         </Typography>
-        <form onSubmit={handleRegister}>
+
+        {/* Registration Form */}
+        <form onSubmit={handleRegister} style={{ marginTop: '60px' }}>
           <TextField
             fullWidth
             label="Name"
@@ -129,6 +202,13 @@ const Register = () => {
             value={formData.name}
             onChange={handleChange}
             required
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PersonIcon />
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             fullWidth
@@ -139,6 +219,13 @@ const Register = () => {
             value={formData.email}
             onChange={handleChange}
             required
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailIcon />
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             fullWidth
@@ -149,6 +236,13 @@ const Register = () => {
             value={formData.phone}
             onChange={handleChange}
             required
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PhoneIcon />
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             fullWidth
@@ -159,42 +253,31 @@ const Register = () => {
             value={formData.address}
             onChange={handleChange}
             required
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <HomeIcon />
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             fullWidth
-            label="Bio"
+            label="Designation"
             variant="outlined"
             margin="normal"
-            name="bio"
-            value={formData.bio}
+            name="designation"
+            value={formData.designation}
             onChange={handleChange}
-            multiline
-            rows={3}
             required
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <WorkIcon />
+                </InputAdornment>
+              ),
+            }}
           />
-
-          {/* Profile Picture Upload */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-            <Avatar
-              src={profilePreview}
-              alt="Profile Picture"
-              sx={{ width: 56, height: 56, mr: 2 }}
-            />
-            <Button
-              variant="outlined"
-              component="label"
-              startIcon={<PhotoCamera />}
-              sx={{ textTransform: 'none', fontSize: '0.8rem' }}
-            >
-              Upload Profile Picture
-              <input
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={handleProfilePictureChange}
-              />
-            </Button>
-          </Box>
 
           <FormControl fullWidth variant="outlined" margin="normal">
             <InputLabel htmlFor="password">Password</InputLabel>
@@ -243,7 +326,7 @@ const Register = () => {
             />
           </FormControl>
           {error && (
-            <Typography variant="body2" color="error" sx={{ mt: 1, mb: 1 }}>
+            <Typography variant="body2" color={themeColor.error} sx={{ mt: 1, mb: 1 }}>
               {error}
             </Typography>
           )}
@@ -252,12 +335,14 @@ const Register = () => {
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ mt: 2, mb: 2, backgroundColor: themeColor.primary }}
+            sx={{ mt: 2, mb: 2, backgroundColor: themeColor.primary, textTransform: 'none' }}
           >
             Register
           </Button>
         </form>
-        <Typography variant="body2" align="center">
+
+        {/* Login Link */}
+        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
           Already have an account? <a href="/login" style={{ color: themeColor.primary }}>Login</a>
         </Typography>
       </StyledPaper>

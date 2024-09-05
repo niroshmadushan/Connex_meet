@@ -1,4 +1,3 @@
-// src/pages/AddMeetingSession.js
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -12,7 +11,16 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Autocomplete,
+  Chip,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  IconButton,
+  Collapse,
 } from '@mui/material';
+import { TransitionGroup } from 'react-transition-group';
 import EventIcon from '@mui/icons-material/Event';
 import RoomIcon from '@mui/icons-material/Room';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -20,8 +28,19 @@ import GroupIcon from '@mui/icons-material/Group';
 import NotesIcon from '@mui/icons-material/Notes';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import TitleIcon from '@mui/icons-material/Title';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SaveIcon from '@mui/icons-material/Save';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+
+// Sample Data for Companies and Visitors
+const companies = [
+  { name: 'Company A', visitors: ['John Doe', 'Jane Smith'] },
+  { name: 'Company B', visitors: ['Alice Brown', 'Bob Johnson'] },
+  { name: 'Company C', visitors: ['Charlie Green', 'Diana White'] },
+];
 
 const themeColor = {
   primary: '#007aff',
@@ -83,9 +102,15 @@ const AddMeetingSession = () => {
     startTimeOptions: [],
     endTimeOptions: [],
     type: 'meeting',
-    participants: '',
+    registeredParticipants: [], // For registered participants, non-editable but deletable
+    unknownParticipants: [], // For unknown participants, editable and deletable
     specialNote: '',
     refreshment: '',
+    companyName: '',
+    companyVisitors: [],
+    newParticipant: '',
+    editingIndex: null,
+    editingName: '',
   });
 
   const navigate = useNavigate();
@@ -140,7 +165,7 @@ const AddMeetingSession = () => {
       const endOptions = generateTimeOptions(formData.startTime, slotEnd);
       setFormData((prevData) => ({
         ...prevData,
-        endTimeOptions: endOptions.slice(1), // Exclude the selected start time from end time options
+        endTimeOptions: endOptions.slice(1),
         endTime: '',
       }));
     }
@@ -150,6 +175,69 @@ const AddMeetingSession = () => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleCompanyChange = (event, value) => {
+    const company = companies.find((c) => c.name === value);
+    setFormData({
+      ...formData,
+      companyName: value,
+      companyVisitors: company ? company.visitors : [],
+    });
+  };
+
+  const handleParticipantSelect = (event, values) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      registeredParticipants: [...new Set([...prevData.registeredParticipants, ...values])],
+    }));
+  };
+
+  const handleDeleteRegisteredParticipant = (index) => {
+    const updatedRegisteredParticipants = formData.registeredParticipants.filter((_, i) => i !== index);
+    setFormData({
+      ...formData,
+      registeredParticipants: updatedRegisteredParticipants,
+    });
+  };
+
+  const handleAddUnknownParticipant = () => {
+    if (formData.newParticipant.trim()) {
+      setFormData((prevData) => ({
+        ...prevData,
+        unknownParticipants: [...prevData.unknownParticipants, prevData.newParticipant.trim()],
+        newParticipant: '',
+      }));
+    }
+  };
+
+  const handleEditUnknownParticipant = (index) => {
+    setFormData({
+      ...formData,
+      editingIndex: index,
+      editingName: formData.unknownParticipants[index],
+    });
+  };
+
+  const handleUpdateUnknownParticipant = () => {
+    if (formData.editingName.trim()) {
+      const updatedUnknownParticipants = [...formData.unknownParticipants];
+      updatedUnknownParticipants[formData.editingIndex] = formData.editingName.trim();
+      setFormData({
+        ...formData,
+        unknownParticipants: updatedUnknownParticipants,
+        editingIndex: null,
+        editingName: '',
+      });
+    }
+  };
+
+  const handleDeleteUnknownParticipant = (index) => {
+    const updatedUnknownParticipants = formData.unknownParticipants.filter((_, i) => i !== index);
+    setFormData({
+      ...formData,
+      unknownParticipants: updatedUnknownParticipants,
     });
   };
 
@@ -176,9 +264,15 @@ const AddMeetingSession = () => {
         startTimeOptions: [],
         endTimeOptions: [],
         type: 'meeting',
-        participants: '',
+        registeredParticipants: [],
+        unknownParticipants: [],
         specialNote: '',
         refreshment: '',
+        companyName: '',
+        companyVisitors: [],
+        newParticipant: '',
+        editingIndex: null,
+        editingName: '',
       });
       navigate('/home-dashboard');
     });
@@ -192,6 +286,7 @@ const AddMeetingSession = () => {
       <Paper elevation={3} sx={{ padding: '20px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
+            {/* Title, Date, and Room Selection */}
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -236,7 +331,7 @@ const AddMeetingSession = () => {
               <FormControl fullWidth>
                 <InputLabel>Select Room</InputLabel>
                 <Select
-                label="selected Room "
+                  label="Select Room"
                   name="selectedRoom"
                   value={formData.selectedRoom}
                   onChange={handleChange}
@@ -261,7 +356,7 @@ const AddMeetingSession = () => {
                 <FormControl fullWidth>
                   <InputLabel>Select Time Slot</InputLabel>
                   <Select
-                  label="selected Slot "
+                    label="Select Time Slot"
                     name="selectedSlot"
                     value={formData.selectedSlot}
                     onChange={handleChange}
@@ -366,24 +461,154 @@ const AddMeetingSession = () => {
               </TextField>
             </Grid>
 
+            {/* New Participant Section */}
+            <Grid item xs={12}>
+              <Autocomplete
+                freeSolo
+                options={companies.map((company) => company.name)}
+                value={formData.companyName}
+                onChange={handleCompanyChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Visitor Company"
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <GroupIcon color="primary" />
+                        </InputAdornment>
+                      ),
+                    }}
+                    required
+                  />
+                )}
+              />
+            </Grid>
+
+            {formData.companyVisitors.length > 0 && (
+              <Grid item xs={12}>
+                <Autocomplete
+                  multiple
+                  options={formData.companyVisitors}
+                  value={formData.registeredParticipants}
+                  onChange={handleParticipantSelect}
+                  renderTags={(value, getTagProps) =>
+                    value.map((option, index) => (
+                      <Chip key={index} label={option} {...getTagProps({ index })} />
+                    ))
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select Registered Visitors"
+                      placeholder="Start typing..."
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <GroupIcon color="primary" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+              </Grid>
+            )}
+
+            {/* List of Registered Participants (Non-Editable, Deletable) */}
+            {formData.registeredParticipants.length > 0 && (
+              <Grid item xs={12}>
+                <Typography variant="body1" sx={{ marginBottom: '10px' }}>
+                  Registered Participants:
+                </Typography>
+                <List>
+                  <TransitionGroup>
+                    {formData.registeredParticipants.map((participant, index) => (
+                      <Collapse key={index}>
+                        <ListItem>
+                          <ListItemText primary={participant} />
+                          <ListItemSecondaryAction>
+                            <IconButton edge="end" onClick={() => handleDeleteRegisteredParticipant(index)}>
+                              <DeleteIcon />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      </Collapse>
+                    ))}
+                  </TransitionGroup>
+                </List>
+              </Grid>
+            )}
+
+            {/* Add Unknown Participants Section */}
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Participants"
-                name="participants"
-                value={formData.participants}
+                label="Add Unknown Participant"
+                name="newParticipant"
+                value={formData.newParticipant}
                 onChange={handleChange}
-                placeholder="Enter participants separated by commas"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <GroupIcon color="primary" />
+                      <AddIcon color="primary" />
                     </InputAdornment>
                   ),
+                  endAdornment: (
+                    <Button onClick={handleAddUnknownParticipant} sx={{ marginLeft: 1 }}>
+                      Add
+                    </Button>
+                  ),
                 }}
-                required
               />
             </Grid>
+
+            {/* List of Unknown Participants (Editable, Deletable) */}
+            {formData.unknownParticipants.length > 0 && (
+              <Grid item xs={12}>
+                <Typography variant="body1" sx={{ marginBottom: '10px' }}>
+                  Unknown Participants:
+                </Typography>
+                <List>
+                  <TransitionGroup>
+                    {formData.unknownParticipants.map((participant, index) => (
+                      <Collapse key={index}>
+                        <ListItem>
+                          {formData.editingIndex === index ? (
+                            <>
+                              <TextField
+                                value={formData.editingName}
+                                onChange={(e) => setFormData({ ...formData, editingName: e.target.value })}
+                                sx={{ marginRight: 1 }}
+                              />
+                              <ListItemSecondaryAction>
+                                <IconButton edge="end" onClick={handleUpdateUnknownParticipant}>
+                                  <SaveIcon />
+                                </IconButton>
+                              </ListItemSecondaryAction>
+                            </>
+                          ) : (
+                            <>
+                              <ListItemText primary={participant} />
+                              <ListItemSecondaryAction>
+                                <IconButton edge="end" onClick={() => handleEditUnknownParticipant(index)}>
+                                  <EditIcon />
+                                </IconButton>
+                                <IconButton edge="end" onClick={() => handleDeleteUnknownParticipant(index)}>
+                                  <DeleteIcon />
+                                </IconButton>
+                              </ListItemSecondaryAction>
+                            </>
+                          )}
+                        </ListItem>
+                      </Collapse>
+                    ))}
+                  </TransitionGroup>
+                </List>
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <TextField
